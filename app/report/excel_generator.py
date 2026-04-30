@@ -1,10 +1,9 @@
-from email import header
-from datetime import datetime
 from openpyxl import Workbook
 from datetime import datetime
 from app.report.formatter import format_sheet, highlight_remarks
 from app.report.summary_generator import generate_summary_sheet, calculate_total_hours
 from app.report.working_days_calculator import calculate_metrics
+from app.report.leave_metrics import extract_leave_metrics
 # from app.report.pivot_chart import add_unpaid_leave_chart
 # from app.report.summary_chart import add_summary_pivot_chart
 import calendar
@@ -45,7 +44,10 @@ def generate_excel(records, output_file):
             header += [f"Day {d} Hours", f"Day {d} Remarks"]
         header.append("Total Hours")
         header.append("Total Working Days")
-        header.append("Total Unpaid Leaves")
+        header.append("Unpaid Leave Count")
+        header.append("Public Holidays")
+        header.append("Unpaid Leave Dates")
+        header.append("Final Work Hours")
         ws.append(header)
 
         for r in recs:
@@ -57,13 +59,23 @@ def generate_excel(records, output_file):
 
                 row.append(entry.get("hours", ""))
                 row.append(entry.get("remarks", ""))
+            
+            working_days, unpaid_days = calculate_metrics(r["entries"], r["month"])
+            
             total_hours = calculate_total_hours(r["entries"])
 
-            working_days, unpaid_days = calculate_metrics(r["entries"], r["month"])
+            public_holidays, unpaid_count, unpaid_dates = extract_leave_metrics(
+                r["entries"], r["month"]
+            )
+
+            final_hours = total_hours - (unpaid_count * 8)
 
             row.append(total_hours)
             row.append(working_days)
-            row.append(unpaid_days)
+            row.append(unpaid_count)
+            row.append(public_holidays)
+            row.append(unpaid_dates)
+            row.append(final_hours)
             ws.append(row)
 
     if "Sheet" in wb.sheetnames:

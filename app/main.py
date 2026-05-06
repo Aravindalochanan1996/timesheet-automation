@@ -9,6 +9,7 @@ def run():
         print("No valid data found!")
         return
 
+    # print(records[0])
     generate_excel(records, OUTPUT_FILE)
 
     print("✅ Timesheet Excel generated successfully")

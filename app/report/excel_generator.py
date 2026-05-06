@@ -48,6 +48,7 @@ def generate_excel(records, output_file):
         header.append("Public Holidays")
         header.append("Unpaid Leave Dates")
         header.append("Final Work Hours")
+        header.append("Report Generated Date")  # ✅ NEW
         ws.append(header)
 
         for r in recs:
@@ -76,6 +77,7 @@ def generate_excel(records, output_file):
             row.append(public_holidays)
             row.append(unpaid_dates)
             row.append(final_hours)
+            row.append(r.get("report_generated", ""))  # ✅ NEW
             ws.append(row)
 
     if "Sheet" in wb.sheetnames:

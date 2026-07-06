@@ -1,4 +1,5 @@
 INPUT_DIR = "C:/Users/Abuthahir Abdul/AgentQA/Timesheet/app/data/input"
 PROCESSED_DIR = "app/data/processed"
 OUTPUT_FILE = "app/data/output/timesheet_report.xlsx"
+EMPLOYEES_FILE = "app/data/input/employees.xlsx"
 LOG_FILE = "app/logs/app.log"   

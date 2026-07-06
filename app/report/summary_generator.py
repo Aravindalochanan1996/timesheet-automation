@@ -33,11 +33,11 @@ def generate_summary_sheet(wb, records):
 
     # ✅ Updated Header
     ws.append([
-        "Name",
-        "Emp ID",
+        "Employee Name",
+        "Employee ID",
         "Month",
         "Total Hours",
-        "Public Holidays",
+        "Public Holiday Dates",
         "Unpaid Leave Count",
         "Unpaid Leave Dates",
         "Final Work Hours"

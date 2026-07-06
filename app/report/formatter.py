@@ -101,8 +101,11 @@ def format_sheet(ws):
         elif "Date" in col_name:
             ws.column_dimensions[column_letter].width = 20
 
-        elif col_name in ["Name", "Emp ID", "Month"]:
-            ws.column_dimensions[column_letter].width = 20
+        elif col_name in ["Emp ID", "Month"]:
+            ws.column_dimensions[column_letter].width = 18
+
+        elif "Employee Name" in col_name:
+            ws.column_dimensions[column_letter].width = 25
 
         else:
             ws.column_dimensions[column_letter].width = 18
@@ -111,24 +114,84 @@ def format_sheet(ws):
     # Apply styles
     # ==============================
     for row in ws.iter_rows():
+
         for cell in row:
+
+            # =========================
+            # Header Row
+            # =========================
             if cell.row == 1:
+
                 cell.font = HEADER_FONT
                 cell.fill = HEADER_FILL
-                cell.alignment = CENTER_ALIGN
-            else:
-                header_value = str(ws.cell(row=1, column=cell.column).value)
 
-                if "Remarks" in header_value:
-                    cell.alignment = LEFT_ALIGN
+                # Wrap text only for Timesheet Enrolled sheet
+                if ws.title == "Timesheet Enrolled":
+
+                    cell.alignment = Alignment(
+                        horizontal="center",
+                        vertical="center",
+                        wrap_text=True
+                    )
+
                 else:
+
                     cell.alignment = CENTER_ALIGN
 
+            # =========================
+            # Data Rows
+            # =========================
+            else:
+
+                header_value = str(
+                    ws.cell(
+                        row=1,
+                        column=cell.column
+                    ).value
+                )
+
+                # Left aligned columns
+                if "Employee Name" in header_value:
+                    cell.alignment = Alignment(
+                        horizontal="left",
+                        vertical="center",
+                        wrap_text=True
+                    )
+
+                # Wrapped columns
+                elif (
+                    "Remarks" in header_value
+                    or header_value == "Unpaid Leave Dates"
+                ):
+
+                    cell.alignment = Alignment(
+                        horizontal="left",
+                        vertical="center",
+                        wrap_text=True
+                    )
+
+                # Default center
+                else:
+
+                    cell.alignment = CENTER_ALIGN
+
+            # =========================
+            # Border
+            # =========================
             cell.border = BORDER
 
     # ==============================
     # Highlight Total Column
     # ==============================
-    for row in ws.iter_rows(min_row=2):
-        total_cell = row[total_col_index - 1]
-        total_cell.fill = TOTAL_FILL
+   
+    if "Total Hours" in header:
+        total_col_index = header.index("Total Hours") + 1
+        for row in ws.iter_rows(min_row=2):
+            total_cell = row[total_col_index - 1]
+            total_cell.fill = TOTAL_FILL
+            
+    if "Final Work Hours" in header:
+        total_col_index = header.index("Final Work Hours") + 1
+        for row in ws.iter_rows(min_row=2):
+            total_cell = row[total_col_index - 1]
+            total_cell.fill = TOTAL_FILL
